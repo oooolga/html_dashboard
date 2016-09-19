@@ -80,7 +80,7 @@ class HTMLFramework:
 		'''
 		(HTMLFramework, list of str, list of list of str, int, str) -> None
 		
-		images is a list of images' path 
+		images is a list of images' path. Make sure the image path is relative to your HTML folder.
 				
 		captions is a list of lists of captions for each image.
 		The dimension of captions should be n x c.

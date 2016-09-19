@@ -8,7 +8,7 @@ from time import gmtime, strftime
 
 CURR_TIME = strftime("%a, %d %b %Y %H:%M:%S +0000", gmtime())
 
-class HTMLFramework:
+class HTMLFramework(object):
 	
 	def __init__(self,
 				page_name,
@@ -136,18 +136,14 @@ class HTMLFramework:
 		
 def setFileDirectory(root_directory, foldername):
 	folder_path = root_directory + '/' + str(foldername)
-	try:
-		if not os.path.isdir(root_directory):
-			print('Error: saving directory does not exist.')
-			return 
-		if os.path.exists(folder_path):
-			shutil.rmtree(folder_path)
-		os.makedirs(folder_path)
-		print('Directory \"'+folder_path+'\" made.')
-	except Exception as e:
-		print('Error in making {} folder.'.format(folder_path))
-		print(e)
-		return
+
+	if not os.path.isdir(root_directory):
+		raise('Error: saving directory does not exist.')
+		return 
+	if os.path.exists(folder_path):
+		shutil.rmtree(folder_path)
+	os.makedirs(folder_path)
+	print('Directory \"'+folder_path+'\" made.')
 
 	return folder_path
 

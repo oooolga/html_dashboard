@@ -78,3 +78,7 @@ if __name__ == '__main__':
 	web_log.write_html()
 	print '\nThe html page is saved to {}'.format(web_log.page_dir)
 
+	# Direcotry html
+	dir_html = codes.list_directory.DirectoryHTML(demo_folder)
+	dir_html.write_html()
+

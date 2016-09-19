@@ -11,8 +11,9 @@ def load_data():
 	mnist = input_data.read_data_sets("MNIST_data/", one_hot=True)
 	return mnist
 
-def train_model(data, log_dir=None):
-	sess = tf.InteractiveSession()
+def train_model(data, log_dir):
+
+	sess = tf.Session(config=tf.ConfigProto(log_device_placement=True))
 
 	x = tf.placeholder(tf.float32, shape=[None, 784])
 	y_ = tf.placeholder(tf.float32, shape=[None, 10])
@@ -51,41 +52,43 @@ def train_model(data, log_dir=None):
 	label = tf.argmax(y_,1)
 	correct_prediction = tf.equal(pred, label)
 	accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
-	sess.run(tf.initialize_all_variables())
 
-	train_acc = []
-	train_loss = []
-	for i in range(5000):
-		batch = data.train.next_batch(50)
-		if i%100 == 0:
-			train_accuracy, train_pred, train_label, train_cost = sess.run(
-				[accuracy, pred, label, cross_entropy],
+	with sess.as_default():
+		sess.run(tf.initialize_all_variables())
+
+		train_acc = []
+		train_loss = []
+		for i in range(5000):
+			batch = data.train.next_batch(50)
+			if i%100 == 0:
+				train_accuracy, train_pred, train_label, train_cost = sess.run(
+					[accuracy, pred, label, cross_entropy],
+					feed_dict={
+						x:batch[0], y_: batch[1], keep_prob: 1.0}
+					)
+
+				print("step %d, training accuracy %g"%(i, train_accuracy))
+
+				if log_dir:
+					with open(log_dir, 'ab') as f:
+						f.write("step %d, training accuracy %g\n"%(i, train_accuracy))
+
+				train_acc.append(train_accuracy)
+				train_loss.append(train_cost)
+
+			train_step.run(feed_dict={x: batch[0], y_: batch[1], keep_prob: 0.5})
+
+		test_accuracy, test_pred, test_label = sess.run(
+				[accuracy, pred, label],
 				feed_dict={
-					x:batch[0], y_: batch[1], keep_prob: 1.0}
-				)
+					x: data.test.images, y_: data.test.labels, keep_prob: 1.0
+				}
+			)
 
-			print("step %d, training accuracy %g"%(i, train_accuracy))
+		print("\ntest accuracy %g"%test_accuracy)
 
-			if log_dir:
-				with open(log_dir, 'ab') as f:
-					f.write("step %d, training accuracy %g\n"%(i, train_accuracy))
-
-			train_acc.append(train_accuracy)
-			train_loss.append(train_cost)
-
-		train_step.run(feed_dict={x: batch[0], y_: batch[1], keep_prob: 0.5})
-
-	test_accuracy, test_pred, test_label = sess.run(
-			[accuracy, pred, label],
-			feed_dict={
-				x: data.test.images, y_: data.test.labels, keep_prob: 1.0
-			}
-		)
-
-	print("\ntest accuracy %g"%test_accuracy)
-
-	with open(log_dir, 'ab') as f:
-		f.write("\ntest accuracy %g\n"%test_accuracy)
+		with open(log_dir, 'ab') as f:
+			f.write("\ntest accuracy %g\n"%test_accuracy)
 
 	return {'train_images': batch[0].reshape(50, 28, 28), 
 			'train_pred': train_pred, 

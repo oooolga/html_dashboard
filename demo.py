@@ -72,7 +72,7 @@ if __name__ == '__main__':
 							num_col=5, sec_name='Training Examples')
 	web_log.add_blank_line()
 	web_log.set_image_table(test_images, width=64, height=64, captions=test_captions, 
-							num_col=5, sec_name='Ttesting Examples')
+							num_col=5, sec_name='Testing Examples')
 
 	# write html
 	web_log.write_html()

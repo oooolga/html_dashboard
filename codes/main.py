@@ -118,6 +118,54 @@ class HTMLFramework(object):
 						td.text(captions[i*num_col+j][k])
 
 
+	def set_siamese_image_table(self, imagesA, imagesB,
+								captions=None, width=128, height=128, sec_name=None):
+		self.set_sec_header(sec_name)
+		
+		table = self.body.table()
+
+		num_images = len(imagesA)
+		num_captions = 0
+		if captions:
+			num_captions = len(captions[0])
+			if num_images != len(captions):
+				raise('Error: number of images does not equal to number of captions.')
+
+		num_row = num_images//2 if num_images%2==0 else (num_images//2)+1
+
+		width_space = 20
+
+		for i in range(num_row):
+			row = table.tr
+
+			td = row.td(valign='top', style='width:{}%'.format(width_space))
+			td.img(src=imagesA[i*2], width='{}'.format(width), height='{}'.format(height))
+
+			td = row.td(valign='top', style='width:{}%'.format(width_space))
+			td.img(src=imagesB[i*2], width='{}'.format(width), height='{}'.format(height))
+
+			td = row.td(valign='top', style='width:{}%'.format(width_space))
+			td.text(' ')
+
+			if i*2+1 < num_images:
+				td = row.td(valign='top', style='width:{}%'.format(width_space))
+				td.img(src=imagesA[i*2+1], width='{}'.format(width), height='{}'.format(height))
+
+				td = row.td(valign='top', style='width:{}%'.format(width_space))
+				td.img(src=imagesB[i*2+1], width='{}'.format(width), height='{}'.format(height))
+
+			for j in range(num_captions):
+				row = table.tr 
+				td = row.td(valign='top', style='width:{}%'.format(width_space*2), align='center', colspan='2')
+				td.text(captions[i*2][j])
+
+				td = row.td(valign='top', style='width:{}%'.format(width_space))
+				td.text(' ')
+
+				td = row.td(valign='top', style='width:{}%'.format(width_space*2), align='center', colspan='2')
+				td.text(captions[i*2+1][j])
+
+
 	def add_blank_line(self):
 		self.body.br()
 		
@@ -197,7 +245,7 @@ def saveImagesFromMatrix(save_dir, image_matrix, prefix='', m=None, size=None):
 
 	return save_images
 
-def generateCaptions(pred, label, m=None):
+def generateCaptions(pred, label, prob=None, m=None):
 	return_list = []
 
 	if not m or m>len(pred):
@@ -205,6 +253,8 @@ def generateCaptions(pred, label, m=None):
 
 	for i in range(m):
 		return_list.append(['pred: {}'.format(pred[i]), 'label: {}'.format(label[i])])
+		if prob != None:
+			return_list[i].append('prob: {:.4f}'.format(prob[i]))
 
 	return return_list
 

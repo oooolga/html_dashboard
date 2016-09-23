@@ -178,6 +178,7 @@ class HTMLFramework(object):
 	def write_html(self):
 		with open(self.page_dir, 'ab') as f:
 			f.write(str(self.html_content))
+			print('Finished updating {}'.format(self.page_dir))
 	
 	
 

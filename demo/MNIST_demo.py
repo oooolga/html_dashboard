@@ -3,15 +3,27 @@ __author__ = "Olga (Ge Ya) Xu"
 ## The following code follows the tf's MNIST example:
 # https://www.tensorflow.org/versions/r0.10/tutorials/mnist/pros/index.html#deep-mnist-for-experts
 
-from tensorflow.examples.tutorials.mnist import input_data
-import tensorflow as tf
-#from html_dashbaord.codes.main import *
-
 def load_data():
+	from tensorflow.examples.tutorials.mnist import input_data
 	mnist = input_data.read_data_sets("MNIST_data/", one_hot=True)
 	return mnist
 
 def train_model(data, log_dir):
+	import tensorflow as tf
+	def weight_variable(shape):
+		initial = tf.truncated_normal(shape, stddev=0.1)
+		return tf.Variable(initial)
+
+	def bias_variable(shape):
+		initial = tf.constant(0.1, shape=shape)
+		return tf.Variable(initial)
+
+	def conv2d(x, W):
+		return tf.nn.conv2d(x, W, strides=[1, 1, 1, 1], padding='SAME')
+
+	def max_pool_2x2(x):
+		return tf.nn.max_pool(x, ksize=[1, 2, 2, 1],
+					strides=[1, 2, 2, 1], padding='SAME')
 
 	sess = tf.Session(config=tf.ConfigProto(log_device_placement=True))
 
@@ -99,22 +111,6 @@ def train_model(data, log_dir):
 			'test_pred': test_pred,
 			'test_label': test_label}
 
-
-
-def weight_variable(shape):
-	initial = tf.truncated_normal(shape, stddev=0.1)
-	return tf.Variable(initial)
-
-def bias_variable(shape):
-	initial = tf.constant(0.1, shape=shape)
-	return tf.Variable(initial)
-
-def conv2d(x, W):
-	return tf.nn.conv2d(x, W, strides=[1, 1, 1, 1], padding='SAME')
-
-def max_pool_2x2(x):
-	return tf.nn.max_pool(x, ksize=[1, 2, 2, 1],
-				strides=[1, 2, 2, 1], padding='SAME')
 
 def train_script(demo_folder):
 	data = load_data()

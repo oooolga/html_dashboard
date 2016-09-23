@@ -17,6 +17,8 @@ def get_args():
 	return save_dir
 
 if __name__ == '__main__':
+
+	import tensorflow as tf
 	save_dir = get_args()
 
 	# create demo folder

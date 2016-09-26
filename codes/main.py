@@ -74,7 +74,18 @@ class HTMLFramework(object):
 		ul = self.body.ul()
 		for item in L:
 			ul.li(str(item))
-			
+
+
+	def set_image_div(self, images, height=128, sec_name=None):
+
+		self.set_sec_header(sec_name)
+
+		div = self.body.div()
+
+		for img in images:
+			div.img(src=img, height='{}'.format(height))
+
+
 			
 	def set_image_table(self, images, width=128, height=128, captions=None, num_col=2, sec_name=None):
 		'''
